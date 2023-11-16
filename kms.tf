@@ -2,11 +2,6 @@ locals {
   encryption_key = var.kms_key != null ? var.kms_key : aws_kms_key.encryption[0]
 }
 
-# data "aws_kms_key" "supplied_encryption" {
-#   count  = var.kms_key_id != null ? 1 : 0
-#   key_id = var.kms_key_id
-# }
-
 resource "aws_kms_key" "encryption" {
   count                   = var.kms_key == null ? 1 : 0
   description             = "dedicated key used by '${local.name_prefix}-${var.name}' elements"
