@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "storage" {
-  bucket = replace("${local.name_prefix}-${var.name}-${data.aws_region.current.name}-${data.aws_caller_identity.current.account_id}", "/[_.+]/", "-")
+  bucket = replace("${local.name_prefix}-${var.name}-${data.aws_caller_identity.current.account_id}", "/[_.+]/", "-")
 }
 
 resource "aws_s3_bucket_versioning" "storage" {
