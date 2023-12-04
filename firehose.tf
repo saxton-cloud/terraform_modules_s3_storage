@@ -1,5 +1,5 @@
 locals {
-  buffered_dynamic_partitioning_enabled = length(regexall("!\\{.*\\}", join("", [var.firehose_config.prefix, var.firehose_config.error_output_prefix]))) > 0
+  buffered_dynamic_partitioning_enabled = length(regexall("!\\{.*\\}", join("", [try(var.firehose_config.prefix, ""), try(var.firehose_config.error_output_prefix, "")]))) > 0
   buffered_min_buffering_size           = local.buffered_dynamic_partitioning_enabled ? 64 : 1
 }
 resource "aws_kinesis_firehose_delivery_stream" "storage_buffer" {
@@ -9,7 +9,7 @@ resource "aws_kinesis_firehose_delivery_stream" "storage_buffer" {
 
 
   dynamic "kinesis_source_configuration" {
-    for_each = var.firehose_config.source_kinesis_stream_arn != null ? [1] : []
+    for_each = try(var.firehose_config.source_kinesis_stream_arn, null) != null ? [1] : []
     content {
       kinesis_stream_arn = var.firehose_config.source_kinesis_stream_arn
       role_arn           = aws_iam_role.storage_buffer[0].arn
@@ -36,7 +36,7 @@ resource "aws_kinesis_firehose_delivery_stream" "storage_buffer" {
     }
 
     # ensure our root prefixes are created
-    prefix              = format("data/%s", replace(var.firehose_config.prefix, "/^data\\//", ""))
+    prefix              = var.firehose_config.prefix
     error_output_prefix = format("errors/%s", replace(var.firehose_config.error_output_prefix, "/^errors\\//", ""))
 
     processing_configuration {

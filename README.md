@@ -61,3 +61,27 @@ module "your_buffered_bucket" {
 }
 
 ```
+
+## reporting configuration
+
+your storage may be configured with athena reporting support.
+
+- **database_name** - _str_ - the name of the glue database that your tables will be registered with
+- **table_prefix** - _str_ - optional, value to prepend the table name(s) discovered by the crawler
+- **table_grouping_level** - _number_ - the key segment depth to be considered an individual table. _1 is considered the root of the bucket '/'_
+
+```hcl
+# using an existing KMS key
+module "your_bucket" {
+  source    = "github.com/acme-widgets-org/terraform_modules_s3_storage"
+  name      = "your_bucket"
+  qualifier = var.qualifier
+  subsystem = var.subsystem
+
+  reporting_config = {
+    database_name = "your_glue_database"
+    table_prefix  = "your_prefix_"
+    table_grouping_level = 2
+  }
+}
+```

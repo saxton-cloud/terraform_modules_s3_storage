@@ -31,9 +31,18 @@ variable "firehose_config" {
     buffering_size            = optional(number, 5)
     buffering_interval        = optional(number, 300)
     compression_format        = optional(string, "GZIP")
-    prefix                    = optional(string, "data/")
+    prefix                    = optional(string, "")
     error_output_prefix       = optional(string, "errors/")
     metadata_extraction       = optional(string, null)
+  })
+  default = null
+}
+variable "reporting_config" {
+  description = "optional, used to specify the reporting configuration"
+  type = object({
+    database_name        = optional(string, null)
+    table_prefix         = optional(string, null)
+    table_grouping_level = optional(number, 1)
   })
   default = null
 }

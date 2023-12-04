@@ -7,6 +7,34 @@ resource "aws_kms_key" "encryption" {
   description             = "dedicated key used by '${local.name_prefix}-${var.name}' elements"
   deletion_window_in_days = 7
   enable_key_rotation     = true
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Id      = "CommonPolicy"
+    Statement = [
+      {
+        Sid    = "AccountRootFullAccess"
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::829660196533:root"
+        }
+        Action   = "kms:*"
+        Resource = "*"
+      },
+      {
+        Sid    = "S3NotificationAccess"
+        Effect = "Allow"
+        Principal = {
+          Service = "s3.amazonaws.com"
+        }
+        Action = [
+          "kms:GenerateDataKey",
+          "kms:Decrypt",
+          "kms:Encrypt"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
 }
 resource "aws_kms_alias" "encryption" {
   count         = var.kms_key == null ? 1 : 0
