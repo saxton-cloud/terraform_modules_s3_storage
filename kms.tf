@@ -15,7 +15,7 @@ resource "aws_kms_key" "encryption" {
         Sid    = "AccountRootFullAccess"
         Effect = "Allow"
         Principal = {
-          AWS = "arn:aws:iam::829660196533:root"
+          AWS = "arn:aws:iam::${local.account_id}:root"
         }
         Action   = "kms:*"
         Resource = "*"
