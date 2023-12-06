@@ -1,8 +1,11 @@
 # s3_storage
 
-> establishes storage & complimentary resources
+> establishes storage & complimentary resources while applying securty, observability and performance best practices
+
 
 ## general configuration
+
+the most basic configuration will simply create an s3 bucket
 
 - **name** - _str_ - name of the component
 - **qualifier** - _str_ - value used to distinguish one instance of this component from another in one or more aws accounts ( e.g. 'environment', branch, user, etc )
@@ -10,7 +13,15 @@
 - **kms_key** - _object_ - optional reference to an existing KMS key resource/data to use for bucket encryption. ( a dedicated key will be created and used if a value is not supplied)
 
 ```hcl
-# using an existing KMS key
+# minimal configurations
+module "your_bucket" {
+  source    = "github.com/acme-widgets-org/terraform_modules_s3_storage"
+  name      = "your_bucket"
+  qualifier = var.qualifier
+  subsystem = var.subsystem
+}
+
+# using an existing KMS key (recommended for cost reduction )
 module "your_bucket" {
   source    = "github.com/acme-widgets-org/terraform_modules_s3_storage"
   name      = "your_bucket"
