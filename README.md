@@ -42,7 +42,7 @@ you may optionally specify the s3 storage be configured with a kinesis firehose 
 - **compression_format** - _str_ - the compression format. If no value is specified, the default is GZIP. Other options include UNCOMPRESSED, ZIP, Snappy & HADOOP_SNAPPY
 - **prefix** - _str_ - the s3 key prefix to use when storing file bundles - dynamic values, including those defined in `metadata_extraction` may be used here
 - **error_output_prefix** - _str_ - the s3 key prefix to use when storing failed file bundles - dynamic values
-- **source_kinesis_stream_arn** - _str_ - optional, specifies the source kinesis data stream feeding this buffer
+- **source_kinesis_stream** - _object_ - optional, specifies the source kinesis data stream feeding this buffer
 
 ```hcl
 # use all defaults, no dynamic partitioning
@@ -68,6 +68,18 @@ module "your_buffered_bucket" {
     prefix              = "!{partitionKeyFromQuery:schema_code}/year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/"
     error_output_prefix = "year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/hour=!{timestamp:HH}/!{firehose:error-output-type}/"
     metadata_extraction = "{schema_code:.schemaCode}"
+  }
+}
+
+# configure to use a kinesis data stream as buffer source
+module "your_buffered_bucket" {
+  source    = "github.com/acme-widgets-org/terraform_modules_s3_storage"
+  name      = "your_bucket"
+  qualifier = var.qualifier
+  subsystem = var.subsystem
+
+  firehose_config = { 
+    source_kinesis_stream = aws_kinesis_stream.your_data_stream
   }
 }
 

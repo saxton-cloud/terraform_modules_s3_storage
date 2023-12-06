@@ -64,8 +64,8 @@ resource "aws_iam_role_policy" "buffer_storage_access" {
   })
 }
 
-resource "aws_iam_policy" "policy" {
-  count       = try(var.firehose_config.source_kinesis_stream_arn, null) != null ? 1 : 0
+resource "aws_iam_policy" "source_kinesis_stream_access" {
+  count       = var.firehose_config.source_kinesis_stream != null ? 1 : 0
   name        = "${local.policy_name_prefix}KinesisSourceStreamAccess"
   path        = local.policy_path
   description = "Grants access to source kinesis data stream"
@@ -81,10 +81,16 @@ resource "aws_iam_policy" "policy" {
           "kinesis:ListShards"
         ]
         Effect   = "Allow"
-        Resource = var.firehose_config.source_kinesis_stream_arn
+        Resource = var.firehose_config.source_kinesis_stream.arn
       },
     ]
   })
+}
+
+resource "aws_iam_role_policy_attachment" "source_kinesis_stream_access" {
+  count      = length(aws_iam_policy.source_kinesis_stream_access)
+  role       = aws_iam_role.storage_buffer[0].name
+  policy_arn = aws_iam_policy.source_kinesis_stream_access[0].arn
 }
 
 

@@ -27,13 +27,13 @@ variable "kms_key" {
 variable "firehose_config" {
   description = "optional, used to specify the firehose buffer configuration"
   type = object({
-    source_kinesis_stream_arn = optional(string, null)
-    buffering_size            = optional(number, 5)
-    buffering_interval        = optional(number, 300)
-    compression_format        = optional(string, "GZIP")
-    prefix                    = optional(string, "")
-    error_output_prefix       = optional(string, "errors/")
-    metadata_extraction       = optional(string, null)
+    source_kinesis_stream = optional(object({ arn = string }), null)
+    buffering_size        = optional(number, 5)
+    buffering_interval    = optional(number, 300)
+    compression_format    = optional(string, "GZIP")
+    prefix                = optional(string, "")
+    error_output_prefix   = optional(string, "errors/")
+    metadata_extraction   = optional(string, null)
   })
   default = null
 }
