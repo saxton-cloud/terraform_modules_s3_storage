@@ -65,7 +65,7 @@ resource "aws_iam_role_policy" "buffer_storage_access" {
 }
 
 resource "aws_iam_policy" "source_kinesis_stream_access" {
-  count       = var.firehose_config.source_kinesis_stream != null ? 1 : 0
+  count       = try(var.firehose_config.source_kinesis_stream, null) != null ? 1 : 0
   name        = "${local.policy_name_prefix}KinesisSourceStreamAccess"
   path        = local.policy_path
   description = "Grants access to source kinesis data stream"

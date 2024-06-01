@@ -9,7 +9,7 @@ resource "aws_kinesis_firehose_delivery_stream" "storage_buffer" {
 
 
   dynamic "kinesis_source_configuration" {
-    for_each = var.firehose_config.source_kinesis_stream != null ? [1] : []
+    for_each = try(var.firehose_config.source_kinesis_stream, null) != null ? [1] : []
     content {
       kinesis_stream_arn = var.firehose_config.source_kinesis_stream.arn
       role_arn           = aws_iam_role.storage_buffer[0].arn
@@ -40,10 +40,10 @@ resource "aws_kinesis_firehose_delivery_stream" "storage_buffer" {
     error_output_prefix = format("errors/%s", replace(var.firehose_config.error_output_prefix, "/^errors\\//", ""))
 
     processing_configuration {
-      enabled = tostring(var.firehose_config.metadata_extraction != null)
+      enabled = tostring(try(var.firehose_config.metadata_extraction, null) != null)
 
       dynamic "processors" {
-        for_each = var.firehose_config.metadata_extraction != null ? [1] : []
+        for_each = try(var.firehose_config.metadata_extraction, null) != null ? [1] : []
         content {
           type = "MetadataExtraction"
           parameters {
